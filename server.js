@@ -69,7 +69,7 @@ app.get("/name-with-s", (req, res) => {
             if (error) {
                 console.error(error);
                 return res.status(500).json({
-                    error: "Kunne ikke pokemon med name der starter med S"
+                    error: "Kunne ikke hente pokemon med name der starter med S"
                 });
             }
 
@@ -80,7 +80,7 @@ app.get("/name-with-s", (req, res) => {
 
 // Get all pokemon which can be fount in the Power Plant location
 app.get("/power-plant", (req, res) => {
-    const sql = `
+    const sqlPokemon = `
         SELECT DISTINCT pokemon.*
         FROM pokemon
         JOIN pokemon_location
@@ -90,7 +90,7 @@ app.get("/power-plant", (req, res) => {
         WHERE location.location_name = ?
     `;
 
-    connection.query(sql, ["Power Plant"], (error, results) => {
+    connection.query(sqlPokemon, ["Power Plant"], (error, results) => {
         if (error) {
             console.error(error);
             return res.status(500).json({
@@ -100,6 +100,23 @@ app.get("/power-plant", (req, res) => {
 
         res.json(results);
     });
+});
+
+// Hent alle trainers
+app.get("/trainer", (req, res) => {
+    connection.query(
+        "SELECT * FROM trainer",
+        (error, results) => {
+            if (error) {
+                console.error(error);
+                return res.status(500).json({
+                    error: "Kunne ikke finde trainers"
+                });
+            }
+
+            res.json(results);
+        }
+    );
 });
 
 
