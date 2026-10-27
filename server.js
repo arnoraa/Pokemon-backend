@@ -127,8 +127,8 @@ app.get("/trainer/pokemon", (req, res) => {
     const sqlTrainerPokemon = `
         SELECT pokemon.*
         FROM pokemon
-                 JOIN trainer_pokemon
-                      ON pokemon.pokedex_number = trainer_pokemon.pokedex_number
+        JOIN trainer_pokemon
+        ON pokemon.pokedex_number = trainer_pokemon.pokedex_number
         WHERE trainer_pokemon.trainer_id = ?
     `;
 
@@ -143,6 +143,13 @@ app.get("/trainer/pokemon", (req, res) => {
         res.json(results);
     });
 });
+
+// add new trainer - Skriv dette i insomnia og udfyld ?
+// {
+//   "trainer_name": "?",
+//   "hometown": "?",
+//   "age": ?
+// }
 app.post("/trainer/new", (req,res) => {
 const trainerName = req.body.trainer_name;
 const trainerHometown = req.body.hometown;
@@ -152,6 +159,12 @@ connection.query(
     "SELECT * FROM trainer WHERE trainer_name = ?",
     [trainerName],
     (error, results) => {
+        if (error) {
+            console.error(error);
+            return res.status(500).json({
+                error: "Kunne ikke kontrollere trainer"
+            });
+        }
         if (results.length > 0) {
             return res.send("Trainer already exists");
         } else {
@@ -160,9 +173,7 @@ connection.query(
                 [trainerName, trainerHometown, trainerAge],
                 (error, results) => {
 
-                    res.send("Trainer created");
-                }
-            );
+                    res.send("Trainer created");});
         }
     }
 );
