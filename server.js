@@ -27,7 +27,7 @@ app.get("/pokemon", (req, res) => {
 });
 
 // Get all water type pokemon
-app.get("/water-pokemon", (req, res) => {
+app.get("/pokemon/water-pokemon", (req, res) => {
     connection.query(
         "SELECT * FROM pokemon WHERE primary_type = ?",
         ["Water"],
@@ -44,7 +44,7 @@ app.get("/water-pokemon", (req, res) => {
     );
 });
 // Get all pokemon with attack above 80
-app.get("/attack-above", (req, res) => {
+app.get("/pokemon/attack-above", (req, res) => {
     connection.query(
         "SELECT * FROM pokemon WHERE attack > ?",
         [80],
@@ -61,7 +61,7 @@ app.get("/attack-above", (req, res) => {
     );
 });
 // Get all pokemon with name that starts with S
-app.get("/name-with-s", (req, res) => {
+app.get("/pokemon/name-with-s", (req, res) => {
     connection.query(
         "SELECT * FROM pokemon WHERE name LIKE ?",
         ["S%"],
@@ -79,7 +79,7 @@ app.get("/name-with-s", (req, res) => {
 });
 
 // Get all pokemon which can be found in the Power Plant location
-app.get("/power-plant", (req, res) => {
+app.get("pokemon/power-plant", (req, res) => {
     const sqlPowerPlant = `
         SELECT DISTINCT pokemon.*
         FROM pokemon
@@ -121,7 +121,7 @@ app.get("/trainer", (req, res) => {
 
 // Get a trainer and put in trainer id in url
 // http://localhost:3000/trainer-pokemon?id=
-app.get("/trainer-pokemon", (req, res) => {
+app.get("/trainer/pokemon", (req, res) => {
     const trainerId = req.query.id;
 
     const sqlTrainerPokemon = `
@@ -143,6 +143,30 @@ app.get("/trainer-pokemon", (req, res) => {
         res.json(results);
     });
 });
+app.post("trainer/new", (req,res) => {
+const trainerName = req.body.trainer_name;
+const trainerHometown = req.body.hometown;
+const trainerAge = req.body.age;
+
+connection.query(
+    "SELECT * FROM trainer WHERE trainer_name = ?",
+    [trainerName],
+    (error, results) => {
+        if (results.length > 0) {
+            return res.send("Trainer already exists");
+        } else {
+            connection.query(
+                "INSERT INTO trainer (trainer_name, hometown, age) VALUES (?, ?, ?)",
+                [trainerName, trainerHometown, trainerAge],
+                (error, results) => {
+
+                    res.send("Trainer created");
+                }
+            );
+        }
+    }
+);
+})
 app.listen(port, () => {
     console.log(`Serveren kører på port ${port}`);
 });
