@@ -78,9 +78,9 @@ app.get("/name-with-s", (req, res) => {
     );
 });
 
-// Get all pokemon which can be fount in the Power Plant location
+// Get all pokemon which can be found in the Power Plant location
 app.get("/power-plant", (req, res) => {
-    const sqlPokemon = `
+    const sqlPowerPlant = `
         SELECT DISTINCT pokemon.*
         FROM pokemon
         JOIN pokemon_location
@@ -90,7 +90,7 @@ app.get("/power-plant", (req, res) => {
         WHERE location.location_name = ?
     `;
 
-    connection.query(sqlPokemon, ["Power Plant"], (error, results) => {
+    connection.query(sqlPowerPlant, ["Power Plant"], (error, results) => {
         if (error) {
             console.error(error);
             return res.status(500).json({
@@ -102,7 +102,7 @@ app.get("/power-plant", (req, res) => {
     });
 });
 
-// Hent alle trainers
+// Get all trainers
 app.get("/trainer", (req, res) => {
     connection.query(
         "SELECT * FROM trainer",
@@ -119,7 +119,30 @@ app.get("/trainer", (req, res) => {
     );
 });
 
+// Get a trainer and put in trainer id in url
+// http://localhost:3000/trainer-pokemon?id=
+app.get("/trainer-pokemon", (req, res) => {
+    const trainerId = req.query.id;
 
+    const sqlTrainerPokemon = `
+        SELECT pokemon.*
+        FROM pokemon
+                 JOIN trainer_pokemon
+                      ON pokemon.pokedex_number = trainer_pokemon.pokedex_number
+        WHERE trainer_pokemon.trainer_id = ?
+    `;
+
+    connection.query(sqlTrainerPokemon, [trainerId], (error, results) => {
+        if (error) {
+            console.error(error);
+            return res.status(500).json({
+                error: "Kunne ikke hente trænerens Pokémon"
+            });
+        }
+
+        res.json(results);
+    });
+});
 app.listen(port, () => {
     console.log(`Serveren kører på port ${port}`);
 });
