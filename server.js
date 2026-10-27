@@ -61,58 +61,6 @@ app.get("/pokemon", (req, res) => {
 });
 
 
-// Get all water type pokemon
-app.get("/pokemon/water-pokemon", (req, res) => {
-    connection.query(
-        "SELECT * FROM pokemon WHERE primary_type = ?",
-        ["Water"],
-        (error, results) => {
-            if (error) {
-                console.error(error);
-                return res.status(500).json({
-                    error: "Kunne ikke finde vandpokemon"
-                });
-            }
-
-            res.json(results);
-        }
-    );
-});
-// Get all pokemon with attack above 80
-app.get("/pokemon/attack-above", (req, res) => {
-    connection.query(
-        "SELECT * FROM pokemon WHERE attack > ?",
-        [80],
-        (error, results) => {
-            if (error) {
-                console.error(error);
-                return res.status(500).json({
-                    error: "Kunne ikke strong pokemon"
-                });
-            }
-
-            res.json(results);
-        }
-    );
-});
-// Get all pokemon with name that starts with S
-app.get("/pokemon/name-with-s", (req, res) => {
-    connection.query(
-        "SELECT * FROM pokemon WHERE name LIKE ?",
-        ["S%"],
-        (error, results) => {
-            if (error) {
-                console.error(error);
-                return res.status(500).json({
-                    error: "Kunne ikke hente pokemon med name der starter med S"
-                });
-            }
-
-            res.json(results);
-        }
-    );
-});
-
 // Get all pokemon which can be found in the Power Plant location
 app.get("/pokemon/power-plant", (req, res) => {
     const sqlPowerPlant = `
