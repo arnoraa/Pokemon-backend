@@ -103,7 +103,7 @@ app.get("/trainer", (req, res) => {
 });
 
 // Get a trainer and put in trainer id in url
-// http://localhost:3000/trainer-pokemon?id=
+// http://localhost:3000/trainer/pokemon?id=
 app.get("/trainer/pokemon", (req, res) => {
     const trainerId = req.query.id;
 
