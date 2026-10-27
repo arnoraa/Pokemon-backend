@@ -17,7 +17,7 @@ app.get("/", (req, res) => {
 });
 
 // Test af databaseforbindelsen
-app.get("/test-db", (req, res) => {
+app.get("/test-databasen", (req, res) => {
     connection.query("SELECT 1", (error, results) => {
         if (error) {
             console.error(error);
