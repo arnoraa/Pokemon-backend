@@ -60,6 +60,41 @@ app.get("/water-pokemon", (req, res) => {
     );
 });
 
+app.get("/attack-above", (req, res) => {
+    connection.query(
+        "SELECT * FROM pokemon WHERE attack > ?",
+        [80],
+        (error, results) => {
+            if (error) {
+                console.error(error);
+                return res.status(500).json({
+                    error: "Kunne ikke strong pokemon"
+                });
+            }
+
+            res.json(results);
+        }
+    );
+});
+
+app.get("/name-with-s", (req, res) => {
+    connection.query(
+        "SELECT * FROM pokemon WHERE name LIKE ?",
+        ["S%"],
+        (error, results) => {
+            if (error) {
+                console.error(error);
+                return res.status(500).json({
+                    error: "Kunne ikke pokemon med name der starter med S"
+                });
+            }
+
+            res.json(results);
+        }
+    );
+});
+
+
 
 app.listen(port, () => {
     console.log(`Serveren kører på port ${port}`);
