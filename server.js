@@ -11,25 +11,9 @@ const port = 3000;
 app.use(cors());
 app.use(express.json());
 
-// Test af serveren
-app.get("/", (req, res) => {
-    res.send("Pokémon-serveren virker!");
-});
 
-// Test af databaseforbindelsen
-app.get("/test-databasen", (req, res) => {
-    connection.query("SELECT 1", (error, results) => {
-        if (error) {
-            console.error(error);
-            return res.status(500).send("Databaseforbindelsen fejlede");
-        }
-
-        res.send("Forbindelsen til MySQL virker!");
-    });
-});
-
-// Hent alle Pokémon
-app.get("/all-pokemon", (req, res) => {
+// Get all pokemon
+app.get("/pokemon", (req, res) => {
     connection.query("SELECT * FROM pokemon", (error, results) => {
         if (error) {
             console.error(error);
@@ -42,7 +26,7 @@ app.get("/all-pokemon", (req, res) => {
     });
 });
 
-
+// Get all water type pokemon
 app.get("/water-pokemon", (req, res) => {
     connection.query(
         "SELECT * FROM pokemon WHERE primary_type = ?",
@@ -59,7 +43,7 @@ app.get("/water-pokemon", (req, res) => {
         }
     );
 });
-
+// Get all pokemon with attack above 80
 app.get("/attack-above", (req, res) => {
     connection.query(
         "SELECT * FROM pokemon WHERE attack > ?",
@@ -76,7 +60,7 @@ app.get("/attack-above", (req, res) => {
         }
     );
 });
-
+// Get all pokemon with name that starts with S
 app.get("/name-with-s", (req, res) => {
     connection.query(
         "SELECT * FROM pokemon WHERE name LIKE ?",
@@ -94,8 +78,7 @@ app.get("/name-with-s", (req, res) => {
     );
 });
 
-
-
+// Get all pokemon which can be fount in the Power Plant location
 app.get("/power-plant", (req, res) => {
     const sql = `
         SELECT DISTINCT pokemon.*
