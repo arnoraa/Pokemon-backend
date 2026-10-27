@@ -96,6 +96,30 @@ app.get("/name-with-s", (req, res) => {
 
 
 
+app.get("/power-plant", (req, res) => {
+    const sql = `
+        SELECT DISTINCT pokemon.*
+        FROM pokemon
+        JOIN pokemon_location
+            ON pokemon.pokedex_number = pokemon_location.pokedex_number
+        JOIN location
+            ON pokemon_location.location_id = location.location_id
+        WHERE location.location_name = ?
+    `;
+
+    connection.query(sql, ["Power Plant"], (error, results) => {
+        if (error) {
+            console.error(error);
+            return res.status(500).json({
+                error: "Kunne ikke hente Pokémon fra Power Plant"
+            });
+        }
+
+        res.json(results);
+    });
+});
+
+
 app.listen(port, () => {
     console.log(`Serveren kører på port ${port}`);
 });
