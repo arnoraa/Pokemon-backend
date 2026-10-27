@@ -13,8 +13,42 @@ app.use(express.json());
 
 
 // Get all pokemon
+
 app.get("/pokemon", (req, res) => {
-    connection.query("SELECT * FROM pokemon", (error, results) => {
+    const type = req.query.type;
+    const minAttack = req.query.minAttack;
+    const startsWith = req.query.startsWith;
+
+    let sql = "SELECT * FROM pokemon WHERE 1=1";
+    let values = [];
+
+    // Filter: primary_type
+    if (type) {
+        sql += " AND primary_type = ?";
+        values.push(type);
+    }
+
+    // Filter: attack over en bestemt værdi
+    if (minAttack !== undefined) {
+        const attackValue = Number(minAttack);
+
+        if (!Number.isFinite(attackValue)) {
+            return res.status(400).json({
+                error: "minAttack skal være et tal"
+            });
+        }
+
+        sql += " AND attack > ?";
+        values.push(attackValue);
+    }
+
+    // Filter: navn starter med et bestemt bogstav
+    if (startsWith) {
+        sql += " AND name LIKE ?";
+        values.push(startsWith + "%");
+    }
+
+    connection.query(sql, values, (error, results) => {
         if (error) {
             console.error(error);
             return res.status(500).json({
@@ -25,6 +59,7 @@ app.get("/pokemon", (req, res) => {
         res.json(results);
     });
 });
+
 
 // Get all water type pokemon
 app.get("/pokemon/water-pokemon", (req, res) => {
