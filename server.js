@@ -19,12 +19,12 @@ app.get("/pokemon", (req, res) => {
     const minAttack = req.query.minAttack;
     const startsWith = req.query.startsWith;
 
-    let sql = "SELECT * FROM pokemon WHERE 1=1";
+    let sqlValues = "SELECT * FROM pokemon WHERE 1=1";
     let values = [];
 
     // Filter: primary_type
     if (type) {
-        sql += " AND primary_type = ?";
+        sqlValues += " AND primary_type = ?";
         values.push(type);
     }
 
@@ -38,17 +38,17 @@ app.get("/pokemon", (req, res) => {
             });
         }
 
-        sql += " AND attack > ?";
+        sqlValues += " AND attack > ?";
         values.push(attackValue);
     }
 
     // Filter: navn starter med et bestemt bogstav
     if (startsWith) {
-        sql += " AND name LIKE ?";
+        sqlValues += " AND name LIKE ?";
         values.push(startsWith + "%");
     }
 
-    connection.query(sql, values, (error, results) => {
+    connection.query(sqlValues, values, (error, results) => {
         if (error) {
             console.error(error);
             return res.status(500).json({
@@ -190,7 +190,6 @@ app.post("/trainer/catch", (req, res) => {
         }
     );
 });
-
 
 app.listen(port, () => {
     console.log(`Serveren kører på port ${port}`);
