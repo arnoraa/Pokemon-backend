@@ -42,6 +42,25 @@ app.get("/all-pokemon", (req, res) => {
     });
 });
 
+
+app.get("/water-pokemon", (req, res) => {
+    connection.query(
+        "SELECT * FROM pokemon WHERE primary_type = ?",
+        ["Water"],
+        (error, results) => {
+            if (error) {
+                console.error(error);
+                return res.status(500).json({
+                    error: "Kunne ikke finde vandpokemon"
+                });
+            }
+
+            res.json(results);
+        }
+    );
+});
+
+
 app.listen(port, () => {
     console.log(`Serveren kører på port ${port}`);
 });
