@@ -12,7 +12,7 @@ app.use(cors());
 app.use(express.json());
 
 
-// Get all pokemon
+// Find alle pokemon
 
 app.get("/pokemon", (req, res) => {
     const type = req.query.type;
@@ -22,13 +22,13 @@ app.get("/pokemon", (req, res) => {
     let sqlValues = "SELECT * FROM pokemon WHERE 1=1";
     let values = [];
 
-    // Filter: primary_type
+    // primary_type
     if (type) {
         sqlValues += " AND primary_type = ?";
         values.push(type);
     }
 
-    // Filter: attack over en bestemt værdi
+    // attack over en bestemt værdi
     if (minAttack !== undefined) {
         const attackValue = Number(minAttack);
 
@@ -42,7 +42,7 @@ app.get("/pokemon", (req, res) => {
         values.push(attackValue);
     }
 
-    // Filter: navn starter med et bestemt bogstav
+    // navn starter med et bestemt bogstav
     if (startsWith) {
         sqlValues += " AND name LIKE ?";
         values.push(startsWith + "%");
@@ -61,7 +61,7 @@ app.get("/pokemon", (req, res) => {
 });
 
 
-// Get all pokemon which can be found in the Power Plant location
+// Find alle pokemon i power-plant location
 app.get("/pokemon/power-plant", (req, res) => {
     const sqlPowerPlant = `
         SELECT DISTINCT pokemon.*
@@ -85,7 +85,7 @@ app.get("/pokemon/power-plant", (req, res) => {
     });
 });
 
-// Get all trainers
+// Hent alle trainers
 app.get("/trainer", (req, res) => {
     connection.query(
         "SELECT * FROM trainer",
@@ -102,7 +102,7 @@ app.get("/trainer", (req, res) => {
     );
 });
 
-// Get a trainer and put in trainer id in url
+// Sæt trainer id ind til sidst i url for at finde trainerens pokemons
 // http://localhost:3000/trainer/pokemon?id=
 app.get("/trainer/pokemon", (req, res) => {
     const trainerId = req.query.id;
@@ -127,7 +127,7 @@ app.get("/trainer/pokemon", (req, res) => {
     });
 });
 
-// add new trainer - Skriv dette i insomnia og udfyld ?
+// tilføj ny trainer - Skriv dette i insomnia og udfyld ?
 // {
 //   "trainer_name": "?",
 //   "hometown": "?",
@@ -162,7 +162,7 @@ connection.query(
 );
 })
 
-// add pokemon to trainer - Skrive i insomnia
+// tilføj pokemon til trainer - Skrive i insomnia
 // {
 //   "trainer_id": ?,
 // 	"pokemon_id": ?
