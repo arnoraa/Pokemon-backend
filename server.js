@@ -79,7 +79,7 @@ app.get("/pokemon/name-with-s", (req, res) => {
 });
 
 // Get all pokemon which can be found in the Power Plant location
-app.get("pokemon/power-plant", (req, res) => {
+app.get("/pokemon/power-plant", (req, res) => {
     const sqlPowerPlant = `
         SELECT DISTINCT pokemon.*
         FROM pokemon
@@ -143,7 +143,7 @@ app.get("/trainer/pokemon", (req, res) => {
         res.json(results);
     });
 });
-app.post("trainer/new", (req,res) => {
+app.post("/trainer/new", (req,res) => {
 const trainerName = req.body.trainer_name;
 const trainerHometown = req.body.hometown;
 const trainerAge = req.body.age;
@@ -167,6 +167,7 @@ connection.query(
     }
 );
 })
+
 app.listen(port, () => {
     console.log(`Serveren kører på port ${port}`);
 });
