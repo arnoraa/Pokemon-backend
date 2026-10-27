@@ -179,6 +179,36 @@ connection.query(
 );
 })
 
+// add pokemon to trainer - Skrive i insomnia
+// {
+//   "trainer_id": ?,
+// 	"pokemon_id": ?
+// }
+app.post("/trainer/catch", (req, res) => {
+    const trainer_id = req.body.trainer_id;
+    const pokemon_id = req.body.pokemon_id;
+
+    connection.query(
+        "INSERT INTO trainer_pokemon (trainer_id, pokedex_number) VALUES (?, ?)",
+        [trainer_id, pokemon_id],
+        (error, results) => {
+            if (error) {
+                console.error(error);
+                return res.status(500).json({
+                    error: "Kunne ikke tilføje Pokémon til trainer"
+                });
+            }
+
+            res.status(201).json({
+                message: "Pokemon was caught",
+                trainer_id: trainer_id,
+                pokedex_number: pokemon_id
+            });
+        }
+    );
+});
+
+
 app.listen(port, () => {
     console.log(`Serveren kører på port ${port}`);
 });
