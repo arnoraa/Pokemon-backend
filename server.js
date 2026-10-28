@@ -194,14 +194,14 @@ app.post("/trainer/catch", (req, res) => {
 app.get("/dashboard/types", (req, res) => {
 // Vi gemmer SQL-forespørgslen i en const til senere brug
     // bruger backticks til at kunne skrive sqlkoden over flere linjer
-    const sqlDashboard = `
+    const sqlPrimary = `
         SELECT primary_type, COUNT(*) AS antal
         FROM pokemon
         GROUP BY primary_type
         ORDER BY antal DESC
         `;
 // vores connection.query sender SQL til vores database og beder om svar
-    connection.query(sqlDashboard, (error, results) => {
+    connection.query(sqlPrimary, (error, results) => {
 // hvis der er fejl håndterer vi det således
         if (error) {
             console.error(error);
@@ -214,6 +214,26 @@ app.get("/dashboard/types", (req, res) => {
             });
         });
 
+app.get("/dashboard/lowest-stats", (req,res) => {
+    const sqlLowest = `
+        SELECT
+        name,
+        (hp + attack + defence + special_attack
+        + special_defence + speed) AS total_stats
+        FROM pokemon
+        ORDER BY total_stats ASC
+        LIMIT 5;
+`
+connection.query(sqlLowest,(error,results) => {
+if(error) {
+console.error(error)
+return res.status(500).json({
+error: "Kunne ikke hente pokemon med laveste stats"
+            });
+        }
+   res.json(results);
+    });
+});
 app.listen(port, () => {
     console.log(`Serveren kører på port ${port}`);
 });
