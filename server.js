@@ -190,6 +190,29 @@ app.post("/trainer/catch", (req, res) => {
         }
     );
 });
+// vi starter med at lave et endpoint
+app.get("/dashboard/types", (req, res) => {
+// Vi gemmer SQL-forespørgslen i en const til senere brug
+    // bruger backticks til at kunne skrive sqlkoden over flere linjer
+    const sqlDashboard = `
+        SELECT primary_type, COUNT(*) AS antal
+        FROM pokemon
+        GROUP BY primary_type
+        ORDER BY antal DESC
+        `;
+// vores connection.query sender SQL til vores database og beder om svar
+    connection.query(sqlDashboard, (error, results) => {
+// hvis der er fejl håndterer vi det således
+        if (error) {
+            console.error(error);
+            return res.status(500).json({
+                error: "Kunne ikke hente dashboard-statistik"
+            });
+        }
+        // resultatet sendes tilbage til browseren
+        res.json(results);
+            });
+        });
 
 app.listen(port, () => {
     console.log(`Serveren kører på port ${port}`);
