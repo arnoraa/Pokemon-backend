@@ -256,6 +256,29 @@ app.get("/dashboard/highest-speed", (req, res) => {
     });
 });
 
+app.get("/dashboard/route-25", (req,res) => {
+    const sqlRoute25 = `
+        SELECT DISTINCT pokemon.pokedex_number,
+                        pokemon.name,
+                        pokemon.primary_type
+        FROM pokemon
+                 JOIN pokemon_location
+                      ON pokemon.pokedex_number = pokemon_location.pokedex_number
+                 JOIN location
+                      ON pokemon_location.location_id = location.location_id
+        WHERE location.location_name = 'Route 25'
+        ORDER BY pokemon.pokedex_number;
+`
+    connection.query(sqlRoute25,(error,results) => {
+        if(error) {
+            console.error(error);
+            return res.status(500).json({
+                error : "Kunne ikke finde pokemon på Route 25"
+            });
+        }
+        res.json(results);
+    });
+})
 app.listen(port, () => {
     console.log(`Serveren kører på port ${port}`);
 });
