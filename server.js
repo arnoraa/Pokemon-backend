@@ -234,6 +234,28 @@ error: "Kunne ikke hente pokemon med laveste stats"
    res.json(results);
     });
 });
+
+app.get("/dashboard/highest-speed", (req, res) => {
+    const sqlFast = `
+        SELECT
+            name,
+            speed
+        FROM pokemon
+        ORDER BY speed DESC
+        LIMIT 5
+    `;
+
+    connection.query(sqlFast, (error, results) => {
+        if (error) {
+            console.error(error);
+            return res.status(500).json({
+                error: "Kunne ikke hente Pokémon med højeste speed"
+            });
+        }
+        res.json(results);
+    });
+});
+
 app.listen(port, () => {
     console.log(`Serveren kører på port ${port}`);
 });
