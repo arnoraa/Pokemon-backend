@@ -257,6 +257,7 @@ app.get("/dashboard/highest-speed", (req, res) => {
 });
 
 app.get("/dashboard/route-25", (req,res) => {
+    // Distinct betyder at vi kun ser pokemonen optræde 1gang
     const sqlRoute25 = `
         SELECT DISTINCT pokemon.pokedex_number,
                         pokemon.name,
