@@ -277,7 +277,13 @@ app.get("/dashboard/route-25", (req,res) => {
                 error : "Kunne ikke finde pokemon på Route 25"
             });
         }
-        res.json(results);
+        // .length viser hvor mange rækker til hver pokemon der forekommer
+        // derfor tæller den hvor mange der er på route 25
+        // pokemon: results viser hvilke pokemon der er på route 25
+        res.json({
+            antal_pokemon: results.length,
+            pokemon: results
+        });
     });
 })
 app.listen(port, () => {
