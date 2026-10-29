@@ -440,7 +440,8 @@ app.get("/dashboard/route-25", (req, res) => {
     const sqlRoute25 = `
         SELECT DISTINCT pokemon.pokedex_number,
                         pokemon.name,
-                        pokemon.primary_type
+                        pokemon.primary_type,
+                        encounter_rate
         FROM pokemon
                  JOIN pokemon_location
                       ON pokemon.pokedex_number = pokemon_location.pokedex_number
@@ -473,7 +474,7 @@ app.get("/dashboard/route-25", (req, res) => {
         // Vi sender derfor både antallet og listen i samme JSON-svar.
         res.json({
             antal_pokemon: results.length,
-            pokemon: results
+            pokemon: results,
         });
     });
 });
