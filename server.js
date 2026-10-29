@@ -12,57 +12,105 @@ app.use(cors());
 app.use(express.json());
 
 
-// Find alle pokemon
+// Find alle Pokémon, og gør det muligt at filtrere dem via URL'en.
+// Eksempel: /pokemon?type=Water&minAttack=80
 
 app.get("/pokemon", (req, res) => {
+
+    // Henter værdien af parameteren "type" fra URL'en.
+    // Eksempel: /pokemon?type=Water giver værdien "Water".
     const type = req.query.type;
+
+    // Henter den ønskede minimumsværdi for attack fra URL'en.
     const minAttack = req.query.minAttack;
+
+    // Henter det bogstav, som Pokémon-navnet skal starte med.
+    // Eksempel: /pokemon?startsWith=S.
     const startsWith = req.query.startsWith;
 
+    // Gemmer SQL-forespørgslen i en variabel.
+    // WHERE 1=1 gør det nemmere at tilføje flere betingelser med AND.
     let sqlValues = "SELECT * FROM pokemon WHERE 1=1";
+
+    // Opretter en tom liste til de værdier, som skal indsættes
+    // i SQL-forespørgslens spørgsmålstegn (?).
     let values = [];
 
-    // primary_type
+    // Hvis der er angivet en type i URL'en, tilføjes denne betingelse.
+    // Vi undersøger kun Pokémonens primary_type.
     if (type) {
+        // Tilføjer et filter, så kun den valgte type returneres.
         sqlValues += " AND primary_type = ?";
+
+        // Gemmer typen i listen over SQL-værdier.
         values.push(type);
     }
 
-    // attack over en bestemt værdi
+    // Hvis minAttack er angivet i URL'en, udføres dette.
     if (minAttack !== undefined) {
+
+        // Konverterer værdien fra URL'en til et tal.
         const attackValue = Number(minAttack);
 
+        // Kontrollerer, om værdien er et gyldigt tal.
+        // Number.isFinite() afviser blandt andet NaN og Infinity.
         if (!Number.isFinite(attackValue)) {
+
+            // Sender HTTP-status 400 tilbage, hvis værdien er ugyldig.
+            // return stopper samtidig resten af denne funktion.
             return res.status(400).json({
                 error: "minAttack skal være et tal"
             });
         }
 
+        // Tilføjer en betingelse, som finder Pokémon med attack
+        // større end den angivne værdi.
         sqlValues += " AND attack > ?";
+
+        // Tilføjer attack-værdien til SQL-forespørgslens parametre.
         values.push(attackValue);
     }
 
-    // navn starter med et bestemt bogstav
+    // Hvis der er angivet et startbogstav, tilføjes dette filter.
     if (startsWith) {
+
+        // LIKE bruges til at søge efter tekst, der matcher et mønster.
+        // % betyder, at der må komme vilkårlige tegn efter bogstavet.
         sqlValues += " AND name LIKE ?";
+
+        // Eksempel: S bliver til S%, som finder navne, der starter med S.
         values.push(startsWith + "%");
     }
 
+    // Sender SQL-forespørgslen og de tilhørende værdier til MySQL.
+    // Spørgsmålstegnene bliver erstattet sikkert med værdierne fra values.
     connection.query(sqlValues, values, (error, results) => {
+
+        // Hvis databasen melder en fejl, udføres denne del.
         if (error) {
+
+            // Udskriver den tekniske fejl i terminalen.
             console.error(error);
+
+            // Sender HTTP-status 500 og en fejlbesked til klienten.
+            // return stopper funktionen her.
             return res.status(500).json({
                 error: "Kunne ikke hente Pokémon"
             });
         }
 
+        // Sender de fundne Pokémon tilbage som JSON.
         res.json(results);
     });
 });
 
 
-// Find alle pokemon i power-plant location
+// Find alle Pokémon, der findes på Power Plant.
+
 app.get("/pokemon/power-plant", (req, res) => {
+
+    // Gemmer SQL-forespørgslen i en variabel.
+    // Backticks gør det muligt at skrive SQL over flere linjer.
     const sqlPowerPlant = `
         SELECT DISTINCT pokemon.*
         FROM pokemon
@@ -73,219 +121,26 @@ app.get("/pokemon/power-plant", (req, res) => {
         WHERE location.location_name = ?
     `;
 
+    // Udfører SQL-forespørgslen.
+    // "Power Plant" indsættes i det sidste spørgsmålstegn.
     connection.query(sqlPowerPlant, ["Power Plant"], (error, results) => {
+
+        // Kontrollerer, om der opstod en databasefejl.
         if (error) {
+
+            // Viser den tekniske fejl i terminalen.
             console.error(error);
+
+            // Sender en fejlbesked tilbage til klienten.
             return res.status(500).json({
                 error: "Kunne ikke hente Pokémon fra Power Plant"
             });
         }
 
+        // Sender listen over Pokémon fra Power Plant tilbage som JSON.
         res.json(results);
     });
 });
-
-// Hent alle trainers
-app.get("/trainer", (req, res) => {
-    connection.query(
-        "SELECT * FROM trainer",
-        (error, results) => {
-            if (error) {
-                console.error(error);
-                return res.status(500).json({
-                    error: "Kunne ikke finde trainers"
-                });
-            }
-
-            res.json(results);
-        }
-    );
-});
-
-// Sæt trainer id ind til sidst i url for at finde trainerens pokemons
-// http://localhost:3000/trainer/pokemon?id=
-app.get("/trainer/pokemon", (req, res) => {
-    const trainerId = req.query.id;
-
-    const sqlTrainerPokemon = `
-        SELECT pokemon.*
-        FROM pokemon
-        JOIN trainer_pokemon
-        ON pokemon.pokedex_number = trainer_pokemon.pokedex_number
-        WHERE trainer_pokemon.trainer_id = ?
-    `;
-
-    connection.query(sqlTrainerPokemon, [trainerId], (error, results) => {
-        if (error) {
-            console.error(error);
-            return res.status(500).json({
-                error: "Kunne ikke hente trænerens Pokémon"
-            });
-        }
-
-        res.json(results);
-    });
-});
-
-// tilføj ny trainer - Skriv dette i insomnia og udfyld ?
-// {
-//   "trainer_name": "?",
-//   "hometown": "?",
-//   "age": ?
-// }
-app.post("/trainer/new", (req,res) => {
-const trainerName = req.body.trainer_name;
-const trainerHometown = req.body.hometown;
-const trainerAge = req.body.age;
-
-connection.query(
-    "SELECT * FROM trainer WHERE trainer_name = ?",
-    [trainerName],
-    (error, results) => {
-        if (error) {
-            console.error(error);
-            return res.status(500).json({
-                error: "Kunne ikke kontrollere trainer"
-            });
-        }
-        if (results.length > 0) {
-            return res.send("Trainer already exists");
-        } else {
-            connection.query(
-                "INSERT INTO trainer (trainer_name, hometown, age) VALUES (?, ?, ?)",
-                [trainerName, trainerHometown, trainerAge],
-                (error, results) => {
-
-                    res.send("Trainer created");});
-        }
-    }
-);
-})
-
-// tilføj pokemon til trainer - Skrive i insomnia
-// {
-//   "trainer_id": ?,
-// 	"pokemon_id": ?
-// }
-app.post("/trainer/catch", (req, res) => {
-    const trainer_id = req.body.trainer_id;
-    const pokemon_id = req.body.pokemon_id;
-
-    connection.query(
-        "INSERT INTO trainer_pokemon (trainer_id, pokedex_number) VALUES (?, ?)",
-        [trainer_id, pokemon_id],
-        (error, results) => {
-            if (error) {
-                console.error(error);
-                return res.status(500).json({
-                    error: "Kunne ikke tilføje Pokémon til trainer"
-                });
-            }
-
-            res.status(201).json({
-                message: "Pokemon was caught",
-                trainer_id: trainer_id,
-                pokedex_number: pokemon_id
-            });
-        }
-    );
-});
-// vi starter med at lave et endpoint
-app.get("/dashboard/types", (req, res) => {
-// Vi gemmer SQL-forespørgslen i en const til senere brug
-    // bruger backticks til at kunne skrive sqlkoden over flere linjer
-    const sqlPrimary = `
-        SELECT primary_type, COUNT(*) AS antal
-        FROM pokemon
-        GROUP BY primary_type
-        ORDER BY antal DESC
-        `;
-// vores connection.query sender SQL til vores database og beder om svar
-    connection.query(sqlPrimary, (error, results) => {
-// hvis der er fejl håndterer vi det således
-        if (error) {
-            console.error(error);
-            return res.status(500).json({
-                error: "Kunne ikke hente dashboard-statistik"
-            });
-        }
-        // resultatet sendes tilbage til browseren
-        res.json(results);
-            });
-        });
-
-app.get("/dashboard/lowest-stats", (req,res) => {
-    const sqlLowest = `
-        SELECT
-        name,
-        (hp + attack + defence + special_attack
-        + special_defence + speed) AS total_stats
-        FROM pokemon
-        ORDER BY total_stats ASC
-        LIMIT 5;
-`
-connection.query(sqlLowest,(error,results) => {
-if(error) {
-console.error(error)
-return res.status(500).json({
-error: "Kunne ikke hente pokemon med laveste stats"
-            });
-        }
-   res.json(results);
-    });
-});
-
-app.get("/dashboard/highest-speed", (req, res) => {
-    const sqlFast = `
-        SELECT
-            name,
-            speed
-        FROM pokemon
-        ORDER BY speed DESC
-        LIMIT 5
-    `;
-
-    connection.query(sqlFast, (error, results) => {
-        if (error) {
-            console.error(error);
-            return res.status(500).json({
-                error: "Kunne ikke hente Pokémon med højeste speed"
-            });
-        }
-        res.json(results);
-    });
-});
-
-app.get("/dashboard/route-25", (req,res) => {
-    // Distinct betyder at vi kun ser pokemonen optræde 1gang
-    const sqlRoute25 = `
-        SELECT DISTINCT pokemon.pokedex_number,
-                        pokemon.name,
-                        pokemon.primary_type
-        FROM pokemon
-                 JOIN pokemon_location
-                      ON pokemon.pokedex_number = pokemon_location.pokedex_number
-                 JOIN location
-                      ON pokemon_location.location_id = location.location_id
-        WHERE location.location_name = 'Route 25'
-        ORDER BY pokemon.pokedex_number;
-`
-    connection.query(sqlRoute25,(error,results) => {
-        if(error) {
-            console.error(error);
-            return res.status(500).json({
-                error : "Kunne ikke finde pokemon på Route 25"
-            });
-        }
-        // .length viser hvor mange rækker til hver pokemon der forekommer
-        // derfor tæller den hvor mange der er på route 25
-        // pokemon: results viser hvilke pokemon der er på route 25
-        res.json({
-            antal_pokemon: results.length,
-            pokemon: results
-        });
-    });
-})
 app.listen(port, () => {
     console.log(`Serveren kører på port ${port}`);
 });
