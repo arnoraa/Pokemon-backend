@@ -26,7 +26,7 @@ app.get("/pokemon", (req, res) => {
 
     // Henter det bogstav, som Pokémon-navnet skal starte med.
     // Eksempel: /pokemon?startsWith=S.
-    const startsWith = req.query.startsWith;
+    const startsWithLetter = req.query.startsWith;
 
     // Gemmer SQL-forespørgslen i en variabel.
     // WHERE 1=1 gør det nemmere at tilføje flere betingelser med AND.
@@ -72,18 +72,17 @@ app.get("/pokemon", (req, res) => {
     }
 
     // Hvis der er angivet et startbogstav, tilføjes dette filter.
-    if (startsWith) {
+    if (startsWithLetter) {
 
         // LIKE bruges til at søge efter tekst, der matcher et mønster.
         // % betyder, at der må komme vilkårlige tegn efter bogstavet.
         sqlValues += " AND name LIKE ?";
 
         // Eksempel: S bliver til S%, som finder navne, der starter med S.
-        values.push(startsWith + "%");
+        values.push(startsWithLetter + "%");
     }
 
-    // Sender SQL-forespørgslen og de tilhørende værdier til MySQL.
-    // Spørgsmålstegnene bliver erstattet sikkert med værdierne fra values.
+    // Sender SQL-forespørgslen og værdierne til MySQL.
     connection.query(sqlValues, values, (error, results) => {
 
         // Hvis databasen melder en fejl, udføres denne del.
@@ -92,8 +91,7 @@ app.get("/pokemon", (req, res) => {
             // Udskriver den tekniske fejl i terminalen.
             console.error(error);
 
-            // Sender HTTP-status 500 og en fejlbesked til klienten.
-            // return stopper funktionen her.
+            // sender fejlen
             return res.status(500).json({
                 error: "Kunne ikke hente Pokémon"
             });
