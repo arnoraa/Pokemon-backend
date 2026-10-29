@@ -1,0 +1,48 @@
+
+<!DOCTYPE html>
+<html lang="da">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trainers</title>
+    <script src="trainers.js" defer></script>
+</head>
+<body>
+<h1>Trainers</h1>
+
+<section>
+    <h2>Alle trainers</h2>
+    <button id="hent-trainers">Hent trainers</button>
+    <ul id="trainer-liste"></ul>
+</section>
+
+<section>
+    <h2>Se en trainers Pokémon</h2>
+    <input id="vis-trainer-id" type="number" placeholder="Trainer ID">
+    <button id="vis-pokemon">Vis Pokémon</button>
+    <ul id="trainer-pokemon-liste"></ul>
+</section>
+
+<section>
+    <h2>Opret en trainer</h2>
+    <form id="opret-trainer-form">
+        <input id="trainer-navn" type="text"
+               placeholder="Trainerens navn" required>
+        <button type="submit">Opret trainer</button>
+    </form>
+    <p id="opret-status"></p>
+</section>
+
+<section>
+    <h2>Tilføj Pokémon til en trainer</h2>
+    <form id="tilfoej-pokemon-form">
+        <input id="tilfoej-trainer-id" type="number"
+               placeholder="Trainer ID" required>
+        <input id="tilfoej-pokemon-id" type="number"
+               placeholder="Pokémon ID" required>
+        <button type="submit">Tilføj Pokémon</button>
+    </form>
+    <p id="tilfoej-status"></p>
+</section>
+</body>
+</html>
