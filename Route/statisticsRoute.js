@@ -38,7 +38,7 @@ router.get('/', async (req, res) => {
             }
         });
 
-        router.get('/highesst-speed', async (req, res) => {
+        router.get('/highest-speed', async (req, res) => {
             const sqlFast = `SELECT name, speed
                              FROM pokemon
                              ORDER BY speed DESC

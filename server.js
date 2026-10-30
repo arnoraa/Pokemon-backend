@@ -14,14 +14,14 @@ const statisticsRoute = require("./Route/statisticsRoute");
 
 app.use("/api/pokemon", pokemonRoute);
 app.use("/api/trainers", trainersRoute);
-app.use("/api/statistics", statisticsRoute);
+app.use("/api/dashboard", statisticsRoute);
 
 app.get("/", (req, res) => {
     res.json({message: "API is running!"});
 });
 
 app.listen(PORT, () => {
-    console.log('Server kører på http://localhost:3000');
+    console.log(`Server kører på http://localhost:${ PORT }!`);
 });
 
 module.exports = app;
