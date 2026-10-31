@@ -47,7 +47,7 @@ router.get("/", async (req, res) => {
 
             const {trainer_name, hometown, age} = req.body;
 
-            if (!trainer_name || !hometown || age === underfined || age === "")
+            if (!trainer_name || !hometown || age === undefined || age === "")
                 return res.status(400).json({
                     error: "Navn, hjemby og alder skal udfyldes"
                 });
@@ -55,7 +55,7 @@ router.get("/", async (req, res) => {
             try {
                 const [existing] = await db.query(
                     "SELECT * FROM trainer WHERE trainer_name = ?",
-                    [trainerName]
+                    [trainer_name]
                 );
 
                 if (existing.length > 0) {
@@ -69,7 +69,7 @@ router.get("/", async (req, res) => {
                 );
 
                 res.status(201).json({
-                    message: "Trainer created",
+                    message: "Trainer opretted",
                     id: results.insertId
                 });
 
