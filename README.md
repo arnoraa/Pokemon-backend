@@ -34,3 +34,36 @@ Ny tabel -> pokemon-location-export.sql
 
 Backend indeholder API-endpoints, som frontend
 anvender til at hente og oprette data. 
+
+
+INSTALLATION OG OPSÆTNING:
+
+1. clone repository:
+   'git clone "https://github.com/arnoraa/Pokemon-backend.git"'
+
+2. 'npm install'
+
+3. Opret en .env -fil, og konfigurer forbindelsen til jeres SQL-database.
+   Eksempel:
+            DB_HOST=localhost
+            DB_USER=dit_brugernavn
+            DB_PASSWORD=din_adgangskode
+            DB_NAME=din_database
+            PORT=3000
+
+4. Importer SQL-filen: "pokemon-location-export.sql" til MySQL
+
+5. Start backend:
+   'node database.js'
+
+
+-- Forbindelse til frontend
+
+Backend stiller data til rådighed via API-endpoints, som frontend-delen tilgår ved hjælp af JavaScript fetch()-funktion
+
+Frontend-repository: "https://github.com/arnoraa/Pokemon-frontend.git"
+
+
+-- Projekt-information
+Projektet er udviklet som gruppearbejde.
+   
