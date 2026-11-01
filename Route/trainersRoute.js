@@ -29,8 +29,7 @@ router.get("/", async (req, res) => {
                 FROM pokemon
                          JOIN trainer_pokemon
                               ON pokemon.pokedex_number = trainer_pokemon.pokedex_number
-                WHERE trainer_pokemon.trainer_id = ?
-            `;
+                WHERE trainer_pokemon.trainer_id = ?`;
 
             try {
                 const [results] = await db.query(sqlTrainerPokemon, [trainerId]);
@@ -47,10 +46,11 @@ router.get("/", async (req, res) => {
 
             const {trainer_name, hometown, age} = req.body;
 
-            if (!trainer_name || !hometown || age === undefined || age === "")
+            if (!trainer_name || !hometown || age === undefined || age === "") {
                 return res.status(400).json({
                     error: "Navn, hjemby og alder skal udfyldes"
                 });
+            }
 
             try {
                 const [existing] = await db.query(
@@ -79,9 +79,10 @@ router.get("/", async (req, res) => {
                     error: "Kunne ikke oprette trainer"
                 });
             }
+        });
 
             router.post("/catch", async (req, res) => {
-                const {trainer_id, pokemon_id} = req.body;
+                const { trainer_id, pokemon_id } = req.body;
 
                 if (trainer_id == null || pokemon_id == null) {
                     return res.status(400).json({
@@ -107,6 +108,5 @@ router.get("/", async (req, res) => {
                     });
                 }
             });
-        });
 
         module.exports = router;
