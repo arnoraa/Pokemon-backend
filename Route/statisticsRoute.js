@@ -70,7 +70,7 @@ router.get('/', async (req, res) => {
                                 ORDER BY pokemon.pokedex_number`;
 
             try {
-                const [results] = await db.query(sqlRoute25, ["Route 25"]);
+                const [results] = await db.query(sqlRoute25);
 
                 res.json({
                     antal_pokemon: results.length,
