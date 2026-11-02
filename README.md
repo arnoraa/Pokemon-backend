@@ -33,7 +33,37 @@ Ny tabel -> pokemon-location-export.sql
 -- API-endpoints
 
 Backend indeholder API-endpoints, som frontend
-anvender til at hente og oprette data. 
+anvender til at hente og oprette data.
+
+
+Nogle Pokémon endpoints:
+
+
+GET -> /pokemon -> Henter alle Pokémon.
+
+GET -> /pokemon?startsWith=S -> Filtrerer Pokémon ved hjælp af query-parametre.
+
+GET -> /pokemon/power-plant -> Henter alle Pokémon, der findes på Power Plant.
+
+
+Nogle Trainer endpoints:
+
+
+GET -> /trainer -> Henter alle trainers.
+
+POST -> /trainer/new -> Opretter en ny trainer.
+
+GET -> /trainer/pokemon -> Henter de Pokémon, som en trainer ejer.
+
+POST -> /trainer/catch -> Tilføj en Pokémon til en trainer.
+
+
+Nogle Dashboard endpoints:
+
+GET -> /dashboard/lowest-stats -> Finder fem Pokémon med laveste samlede stats.
+
+GET -> /dashboard/highest-speed -> Finder fem Pokémon med højeste speed.
+
 
 
 INSTALLATION OG OPSÆTNING:
@@ -43,18 +73,26 @@ INSTALLATION OG OPSÆTNING:
 
 2. 'npm install'
 
-3. Opret en .env -fil, og konfigurer forbindelsen til jeres SQL-database.
+3. Opret en .env -fil i backenden, og konfigurer forbindelsen til jeres SQL-database.
+   
    Eksempel:
-            DB_HOST=localhost
-            DB_USER=dit_brugernavn
-            DB_PASSWORD=din_adgangskode
-            DB_NAME=din_database
+   
+            DBHOST=localhost
+
+            DBUSER=dit_brugernavn
+   
+            DBPASSWORD=din_adgangskode
+   
+            DBNAME=din_database
+   
             PORT=3000
 
-4. Importer SQL-filen: "pokemon-location-export.sql" til MySQL
+5. Importer SQL-filen: "pokemon-location-export.sql" til MySQL
 
-5. Start backend:
-   'node database.js'
+6. 'npm start'
+
+Skriv URL: localhost:3000. Om serveren kører skal der stå: "Serveren kører på port 3000"
+
 
 
 -- Forbindelse til frontend
