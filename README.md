@@ -83,7 +83,7 @@ INSTALLATION OG OPSÆTNING:
    
             DBPASSWORD=din_adgangskode
    
-            DBNAME=din_database
+            DBDATABASE=din_database
    
             PORT=3000
 
